@@ -1,12 +1,12 @@
 /**
  * Single source of truth for the site's canonical URL and identity.
  *
- * Set NEXT_PUBLIC_SITE_URL in your hosting environment (e.g. Vercel)
- * to your real domain, e.g. https://stephanmalobeka.vercel.app
- * The fallback keeps builds working locally before it is configured.
+ * NEXT_PUBLIC_SITE_URL can override this per environment, but the default
+ * is the real production domain so canonicals/sitemap/robots are always
+ * correct — wrong-domain canonicals suppress indexing on Google.
  */
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://my-site.vercel.app"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://maloz-dev.vercel.app"
 ).replace(/\/$/, "");
 
 export const siteName = "Stephan Malobeka";
