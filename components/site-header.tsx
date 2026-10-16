@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { GitHubIcon, LinkedInIcon, WhatsAppIcon } from "@/components/social-icons";
+import { PendingLabel } from "@/components/link-pending";
 import { contact } from "@/lib/data";
 
 const navLinks = [
@@ -72,7 +73,7 @@ export function SiteHeader() {
                     pathname === link.href ? "text-brand" : ""
                   }`}
                   >
-                    {link.label}
+                    <PendingLabel>{link.label}</PendingLabel>
                   </Link>
                 ))}
               </nav>
@@ -91,7 +92,7 @@ export function SiteHeader() {
                     : "text-muted-foreground"
                 }`}
               >
-                {link.label}
+                <PendingLabel>{link.label}</PendingLabel>
               </Link>
             ))}
           </nav>

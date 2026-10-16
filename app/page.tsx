@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowRight,
   ArrowUpRight,
   Award,
   Briefcase,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { TypingAnimation } from "@/components/ui/typing-animation";
+import { PendingArrow } from "@/components/link-pending";
 import { GitHubIcon, LinkedInIcon, WhatsAppIcon } from "@/components/social-icons";
 import { ProjectCover } from "@/components/project-cover";
 import { contact, type Project } from "@/lib/data";
@@ -92,7 +92,7 @@ export default async function Home() {
                 className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand px-6 text-sm font-semibold text-primary-foreground transition-all hover:bg-brand-dim hover:shadow-[0_0_24px_oklch(0.88_0.22_150_/_35%)] focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none"
               >
                 View my work
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                <PendingArrow />
               </Link>
               <Link
                 href={portfolioContact.cv}
@@ -204,7 +204,7 @@ export default async function Home() {
             className="group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-brand"
           >
             All projects
-            <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <PendingArrow icon="arrow-up" />
           </Link>
         </div>
 
