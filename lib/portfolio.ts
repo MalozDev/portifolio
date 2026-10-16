@@ -217,17 +217,18 @@ function serializeCertification(doc: CertificationDoc): Certification {
  * Falls back to the static defaults when the DB is empty or unreachable,
  * so the site keeps working before (or without) seeding.
  */
-export async function getPortfolio(db: Db): Promise<PortfolioData> {
+export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData> {
   try {
+    const database = await db;
     const [projectDocs, certDocs, photoDocs, contentDoc] = await Promise.all([
-      db.collection<ProjectDoc>("projects").find().sort({ order: 1 }).toArray(),
-      db
+      database.collection<ProjectDoc>("projects").find().sort({ order: 1 }).toArray(),
+      database
         .collection<CertificationDoc>("certifications")
         .find()
         .sort({ order: 1 })
         .toArray(),
-      db.collection<PhotoDoc>("photos").find().sort({ order: 1 }).toArray(),
-      db.collection<SiteContentDoc>("content").findOne({ _id: "site" }),
+      database.collection<PhotoDoc>("photos").find().sort({ order: 1 }).toArray(),
+      database.collection<SiteContentDoc>("content").findOne({ _id: "site" }),
     ]);
 
     const projects =

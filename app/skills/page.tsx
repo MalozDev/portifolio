@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 export default async function SkillsPage() {
-  const { content } = await getPortfolio(await getDb());
+  const { content } = await getPortfolio(getDb());
   const skillGroups = staticSkillGroups;
   const competencies = content.competencies;
   return (

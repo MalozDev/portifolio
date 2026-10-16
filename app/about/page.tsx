@@ -53,7 +53,7 @@ const experience = [
 ];
 
 export default async function AboutPage() {
-  const { photos, content, contact: portfolioContact } = await getPortfolio(await getDb());
+  const { photos, content, contact: portfolioContact } = await getPortfolio(getDb());
   const learningPath = content.journey;
   const leadership = content.leadership;
   const languages = content.languages;

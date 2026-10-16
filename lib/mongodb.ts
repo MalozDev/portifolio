@@ -3,12 +3,6 @@ import { Db, Document, GridFSBucket, MongoClient } from "mongodb";
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB;
 
-if (!MONGODB_URI) {
-  throw new Error(
-    "Missing MONGODB_URI. Add it to .env — this project connects directly to the production MongoDB cluster."
-  );
-}
-
 declare global {
   var __mongoClient: MongoClient | undefined;
 }
@@ -19,8 +13,14 @@ declare global {
  * production cluster (no local database).
  */
 export function getMongoClient(): MongoClient {
+  if (!MONGODB_URI) {
+    throw new Error(
+      "Missing MONGODB_URI. Add it to .env — this project connects directly to the production MongoDB cluster."
+    );
+  }
+
   if (!global.__mongoClient) {
-    global.__mongoClient = new MongoClient(MONGODB_URI!, {
+    global.__mongoClient = new MongoClient(MONGODB_URI, {
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 8000,
     });

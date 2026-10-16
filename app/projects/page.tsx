@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export default async function ProjectsPage() {
-  const { projects } = await getPortfolio(await getDb());
+  const { projects } = await getPortfolio(getDb());
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 md:py-20">
       <p className="mb-2 font-mono text-sm text-brand">$ ls ./projects --live</p>

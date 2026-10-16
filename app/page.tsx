@@ -27,7 +27,7 @@ const stats = [
 ];
 
 export default async function Home() {
-  const { projects, content, contact: portfolioContact } = await getPortfolio(await getDb());
+  const { projects, content, contact: portfolioContact } = await getPortfolio(getDb());
   const featured = projects.filter((p) => p.featured).slice(0, 4);
   const marqueeItems = content.marquee;
   const heroRoles = content.hero.roles;
