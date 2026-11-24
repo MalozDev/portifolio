@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { FolderKanban, GraduationCap, ImageIcon, LayoutDashboard, LogOut, Menu, Type, X } from "lucide-react";
+import { Briefcase, FolderKanban, GraduationCap, ImageIcon, LayoutDashboard, LogOut, Menu, Type, X } from "lucide-react";
 
 const NAV = [
   { href: "/console", label: "Dashboard", icon: LayoutDashboard },
   { href: "/console/projects", label: "Projects", icon: FolderKanban },
   { href: "/console/certifications", label: "Certifications", icon: GraduationCap },
+  { href: "/console/experience", label: "Experience", icon: Briefcase },
   { href: "/console/photos", label: "Photos", icon: ImageIcon },
   { href: "/console/content", label: "Site Content", icon: Type },
 ];

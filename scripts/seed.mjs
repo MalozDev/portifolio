@@ -176,6 +176,39 @@ const CERTIFICATES = [
   { title: "AWS Certification", issuer: "Amazon Web Services", file: null },
 ];
 
+const EXPERIENCES = [
+  {
+    role: "Home Broadband Outdoor Unit (ODU) Installer",
+    company: "Telecommunications Operator (Confidential)",
+    period: "2025 – Present",
+    startDate: "2025-12-08",
+    endDate: "",
+    points: [
+      "Install and commission outdoor unit broadband systems.",
+      "Conduct customer site surveys and optimize signal performance.",
+      "Configure customer networking equipment and validate connectivity.",
+      "Troubleshoot installation and connectivity issues.",
+      "Ensure high-quality installations and strong customer satisfaction.",
+      "Coordinate with technical teams during service activation.",
+    ],
+    highlight: "🏆 Mukali Award — Recognized as a top-performing installer during the quarter for outstanding service delivery.",
+  },
+  {
+    role: "Telecommunications Engineering Intern",
+    company: "Baicells Technologies",
+    period: "Internship",
+    startDate: "2024-01",
+    endDate: "2024-12",
+    points: [
+      "Assisted with monitoring core network systems.",
+      "Participated in network troubleshooting and incident resolution.",
+      "Supported infrastructure maintenance and upgrades.",
+      "Studied mobile telecommunications architecture and best practices.",
+      "Collaborated closely with senior network engineers.",
+    ],
+  },
+];
+
 const PHOTOS = [
   { file: "public/welcome-image.jpeg", alt: "Stephan Malobeka" },
   { file: "public/welcome-black-n-white.jpeg", alt: "Stephan Malobeka, black and white portrait" },
@@ -259,6 +292,18 @@ try {
     console.log(`✓ ${docs.length} certifications seeded (${docs.filter((d) => d.pdfFileId).length} with PDFs)`);
   } else {
     console.log("· certifications already present — skipped");
+  }
+
+  /* 4b. Job experience */
+  const experienceCount = await db.collection("experiences").countDocuments();
+  if (experienceCount === 0) {
+    const now = new Date();
+    await db.collection("experiences").insertMany(
+      EXPERIENCES.map((e, i) => ({ ...e, order: i, createdAt: now, updatedAt: now }))
+    );
+    console.log(`✓ ${EXPERIENCES.length} experience entries seeded`);
+  } else {
+    console.log("· experiences already present — skipped");
   }
 
   /* 5. Photos for the About slider */

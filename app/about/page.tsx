@@ -15,7 +15,7 @@ import { PhotoSlider } from "@/components/photo-slider";
 import { Terminal } from "@/components/terminal";
 import { Reveal } from "@/components/reveal";
 import { contact } from "@/lib/data";
-import { getPortfolio } from "@/lib/portfolio";
+import { formatExperiencePeriod, getPortfolio } from "@/lib/portfolio";
 import { getDb } from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
@@ -27,33 +27,8 @@ export const metadata = {
   alternates: { canonical: "/about" },
 };
 
-const experience = [
-  {
-    role: "Home Broadband ODU Installer",
-    company: "Telecommunications Operator (Confidential)",
-    period: "2025 — Present",
-    points: [
-      "Install and commission outdoor unit broadband systems.",
-      "Site surveys, signal optimization, and network troubleshooting.",
-      "Configure customer equipment and validate connectivity end-to-end.",
-    ],
-    highlight:
-      "🏆 Mukali Award — top-performing installer of the quarter.",
-  },
-  {
-    role: "Telecommunications Engineering Intern",
-    company: "Baicells Technologies",
-    period: "Internship",
-    points: [
-      "Supported engineers on the Zedmobile Core Network.",
-      "Assisted core network monitoring and incident resolution.",
-      "Infrastructure maintenance alongside senior network engineers.",
-    ],
-  },
-];
-
 export default async function AboutPage() {
-  const { photos, content, contact: portfolioContact } = await getPortfolio(getDb());
+  const { photos, content, contact: portfolioContact, experiences } = await getPortfolio(getDb());
   const learningPath = content.journey;
   const leadership = content.leadership;
   const languages = content.languages;
@@ -201,7 +176,7 @@ export default async function AboutPage() {
         </h2>
 
         <div className="relative mt-8 space-y-4 border-l border-border pl-6 sm:pl-8">
-          {experience.map((job, i) => (
+          {experiences.map((job, i) => (
             <Reveal key={job.role} delay={i * 120}>
               <article className="relative rounded-2xl border border-border bg-card p-6">
                 {/* Timeline dot */}
@@ -214,7 +189,7 @@ export default async function AboutPage() {
                     {job.role}
                   </h3>
                   <span className="font-mono text-xs text-brand">
-                    {job.period}
+                    {formatExperiencePeriod(job)}
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">

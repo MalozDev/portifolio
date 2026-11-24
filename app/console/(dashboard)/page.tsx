@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FolderKanban, GraduationCap, ImageIcon, RefreshCw, Type } from "lucide-react";
+import { Briefcase, FolderKanban, GraduationCap, ImageIcon, RefreshCw, Type } from "lucide-react";
 
 import { ErrorBanner } from "@/components/console/fields";
 import { useConsoleApi } from "@/components/console/use-console-api";
@@ -16,6 +16,10 @@ interface CertItem {
   _id: string;
   title: string;
 }
+interface ExperienceItem {
+  _id: string;
+  role: string;
+}
 interface PhotoItem {
   _id: string;
   url: string;
@@ -25,19 +29,22 @@ export default function ConsoleDashboardPage() {
   const api = useConsoleApi();
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [certs, setCerts] = useState<CertItem[]>([]);
+  const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
     try {
-      const [p, c, ph] = await Promise.all([
+      const [p, c, e, ph] = await Promise.all([
         api.get<ProjectItem[]>("/api/admin/projects"),
         api.get<CertItem[]>("/api/admin/certifications"),
+        api.get<ExperienceItem[]>("/api/admin/experiences"),
         api.get<PhotoItem[]>("/api/admin/photos"),
       ]);
       setProjects(p);
       setCerts(c);
+      setExperiences(e);
       setPhotos(ph);
     } catch (e) {
       if (!(e instanceof Error && e.message === "Unauthorized")) {
@@ -67,6 +74,13 @@ export default function ConsoleDashboardPage() {
       label: "Certifications",
       count: certs.length,
       icon: GraduationCap,
+    },
+    {
+      href: "/console/experience",
+      label: "Experience",
+      count: experiences.length,
+      icon: Briefcase,
+      note: "Work history",
     },
     {
       href: "/console/photos",

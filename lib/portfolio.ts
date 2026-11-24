@@ -37,6 +37,31 @@ export interface CertificationDoc extends Document {
   updatedAt: Date;
 }
 
+export interface ExperienceDoc extends Document {
+  role: string;
+  company: string;
+  period: string;
+  startDate?: string;
+  endDate?: string;
+  points: string[];
+  highlight?: string;
+  imageFileId?: ObjectId;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Experience {
+  role: string;
+  company: string;
+  period: string;
+  startDate?: string;
+  endDate?: string;
+  points: string[];
+  highlight?: string;
+  image?: string;
+}
+
 export interface PhotoDoc extends Document {
   fileId: ObjectId;
   alt: string;
@@ -73,6 +98,40 @@ export interface SiteContentDoc extends Document {
 /* ------------------------------------------------------------------ */
 /* Static defaults (also the seed values)                              */
 /* ------------------------------------------------------------------ */
+
+export const defaultExperiences: Experience[] = [
+  {
+    role: "Home Broadband Outdoor Unit (ODU) Installer",
+    company: "Telecommunications Operator (Confidential)",
+    period: "2025 – Present",
+    startDate: "2025-12-08",
+    endDate: "",
+    points: [
+      "Install and commission outdoor unit broadband systems.",
+      "Conduct customer site surveys and optimize signal performance.",
+      "Configure customer networking equipment and validate connectivity.",
+      "Troubleshoot installation and connectivity issues.",
+      "Ensure high-quality installations and strong customer satisfaction.",
+      "Coordinate with technical teams during service activation.",
+    ],
+    highlight:
+      "🏆 Mukali Award — Recognized as a top-performing installer during the quarter for outstanding service delivery.",
+  },
+  {
+    role: "Telecommunications Engineering Intern",
+    company: "Baicells Technologies",
+    period: "Internship",
+    startDate: "2024-01",
+    endDate: "2024-12",
+    points: [
+      "Assisted with monitoring core network systems.",
+      "Participated in network troubleshooting and incident resolution.",
+      "Supported infrastructure maintenance and upgrades.",
+      "Studied mobile telecommunications architecture and best practices.",
+      "Collaborated closely with senior network engineers.",
+    ],
+  },
+];
 
 export const defaultContent: SiteContentDoc = {
   _id: "site",
@@ -184,6 +243,7 @@ export { staticCertifications, staticContact, staticSkillGroups };
 export interface PortfolioData {
   projects: Project[];
   certifications: Certification[];
+  experiences: Experience[];
   photos: { id: string; url: string; alt: string; caption?: string }[];
   content: SiteContentDoc;
   contact: typeof staticContact;
@@ -212,6 +272,108 @@ function serializeCertification(doc: CertificationDoc): Certification {
   };
 }
 
+function serializeExperience(doc: ExperienceDoc): Experience {
+  return {
+    role: doc.role,
+    company: doc.company,
+    period: doc.period,
+    startDate: doc.startDate,
+    endDate: doc.endDate,
+    points: doc.points ?? [],
+    highlight: doc.highlight,
+    image: doc.imageFileId ? `/api/media/${doc.imageFileId.toString()}` : undefined,
+  };
+}
+
+function parseExperienceDate(value?: string): number {
+  if (!value) return 0;
+  const match = value.match(/(\d{4})(?:-(\d{2}))?/);
+  if (!match) return 0;
+  const year = Number(match[1]);
+  const month = match[2] ? Number(match[2]) : 1;
+  return year * 12 + (month - 1);
+}
+
+export function isCurrentExperience(endDate?: string): boolean {
+  const value = (endDate ?? "").trim().toLowerCase();
+  return value === "" || value === "present" || value === "current" || value === "now";
+}
+
+export function sortExperiencesByRecency<T extends { startDate?: string; endDate?: string }>(
+  items: T[]
+): T[] {
+  return [...items].sort((a, b) => {
+    const aCurrent = isCurrentExperience(a.endDate) ? 1 : 0;
+    const bCurrent = isCurrentExperience(b.endDate) ? 1 : 0;
+    if (aCurrent !== bCurrent) return bCurrent - aCurrent;
+
+    const aEnd = isCurrentExperience(a.endDate)
+      ? Number.MAX_SAFE_INTEGER
+      : parseExperienceDate(a.endDate);
+    const bEnd = isCurrentExperience(b.endDate)
+      ? Number.MAX_SAFE_INTEGER
+      : parseExperienceDate(b.endDate);
+    if (aEnd !== bEnd) return bEnd - aEnd;
+
+    return parseExperienceDate(b.startDate) - parseExperienceDate(a.startDate);
+  });
+}
+
+export function formatExperiencePeriod(exp: {
+  period?: string;
+  startDate?: string;
+  endDate?: string;
+}): string {
+  if (exp.period && exp.period.trim()) return exp.period;
+  const start = exp.startDate?.trim();
+  const end = exp.endDate?.trim();
+  if (!start && !end) return "";
+  const endLabel = isCurrentExperience(end) ? "Present" : end || "Present";
+  return start ? `${start} – ${endLabel}` : endLabel;
+}
+
+function parseExperienceDateObject(value?: string): Date | null {
+  if (!value) return null;
+  const match = value.match(/(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?/);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = match[2] ? Number(match[2]) - 1 : 0;
+  const day = match[3] ? Number(match[3]) : 1;
+  const date = new Date(year, month, day);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+export function experienceDuration(exp: {
+  startDate?: string;
+  endDate?: string;
+}): string {
+  const start = parseExperienceDateObject(exp.startDate);
+  if (!start) return "";
+  const end = isCurrentExperience(exp.endDate)
+    ? new Date()
+    : parseExperienceDateObject(exp.endDate);
+  if (!end || end < start) return "";
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+  if (days < 0) {
+    months -= 1;
+    const previousMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += previousMonth.getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years} year${years === 1 ? "" : "s"}`);
+  if (months > 0) parts.push(`${months} month${months === 1 ? "" : "s"}`);
+  if (days > 0 && years === 0) parts.push(`${days} day${days === 1 ? "" : "s"}`);
+  return parts.join(" ") || "< 1 day";
+}
+
 /**
  * Load the full portfolio dataset from MongoDB.
  * Falls back to the static defaults when the DB is empty or unreachable,
@@ -220,10 +382,15 @@ function serializeCertification(doc: CertificationDoc): Certification {
 export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData> {
   try {
     const database = await db;
-    const [projectDocs, certDocs, photoDocs, contentDoc] = await Promise.all([
+    const [projectDocs, certDocs, experienceDocs, photoDocs, contentDoc] = await Promise.all([
       database.collection<ProjectDoc>("projects").find().sort({ order: 1 }).toArray(),
       database
         .collection<CertificationDoc>("certifications")
+        .find()
+        .sort({ order: 1 })
+        .toArray(),
+      database
+        .collection<ExperienceDoc>("experiences")
         .find()
         .sort({ order: 1 })
         .toArray(),
@@ -235,6 +402,10 @@ export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData>
       projectDocs.length > 0 ? projectDocs.map(serializeProject) : staticProjects;
     const certifications =
       certDocs.length > 0 ? certDocs.map(serializeCertification) : staticCertifications;
+    const experiences =
+      experienceDocs.length > 0
+        ? sortExperiencesByRecency(experienceDocs.map(serializeExperience))
+        : sortExperiencesByRecency(defaultExperiences);
     const photos =
       photoDocs.length > 0
         ? photoDocs.map((p) => ({
@@ -255,6 +426,7 @@ export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData>
     return {
       projects,
       certifications,
+      experiences,
       photos,
       content: contentDoc ?? defaultContent,
       contact: {
@@ -269,6 +441,7 @@ export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData>
     return {
       projects: staticProjects,
       certifications: staticCertifications,
+      experiences: defaultExperiences,
       photos: [
         { id: "static-1", url: "/welcome-image.jpeg", alt: "Stephan Malobeka" },
         {

@@ -23,6 +23,7 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/certification", label: "Certifications" },
+  { href: "/experience", label: "Experience" },
   { href: "/skills", label: "Skills" },
 ];
 
@@ -42,18 +43,14 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
-      <div className="relative mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Left: menu (mobile) / nav (desktop) */}
-        <div className="flex items-center">
+      <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
+        {/* Left: mobile menu + logo */}
+        <div className="flex min-w-0 items-center gap-2">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label="Open menu"
               render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden"
-                />
+                <Button variant="ghost" size="icon" className="lg:hidden" />
               }
             >
               <MenuIcon />
@@ -69,9 +66,9 @@ export function SiteHeader() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setOpen(false)}
-                  className={`rounded-md px-3 py-3 text-base font-medium transition-colors hover:bg-muted hover:text-foreground ${
-                    pathname === link.href ? "text-brand" : ""
-                  }`}
+                    className={`rounded-md px-3 py-3 text-base font-medium transition-colors hover:bg-muted hover:text-foreground ${
+                      pathname === link.href ? "text-brand" : ""
+                    }`}
                   >
                     <PendingLabel>{link.label}</PendingLabel>
                   </Link>
@@ -80,13 +77,35 @@ export function SiteHeader() {
             </SheetContent>
           </Sheet>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
+          <Link
+            href="/"
+            className="group ml-[30px] flex items-center gap-0.5 whitespace-nowrap font-mono text-xs font-semibold transition-colors sm:gap-1 sm:text-sm lg:ml-0 lg:text-base"
+            aria-label="Stephan Malobeka — home"
+          >
+            <span className="text-muted-foreground/70 transition-colors group-hover:text-muted-foreground">
+              &lt;
+            </span>
+            <span className="bg-gradient-to-r from-brand via-[oklch(0.8_0.18_190)] to-brand bg-[length:200%_auto] bg-clip-text text-transparent animate-text-shimmer">
+              Stephan
+            </span>
+            <span className="bg-gradient-to-r from-[oklch(0.75_0.16_250)] via-[oklch(0.72_0.16_300)] to-[oklch(0.75_0.16_250)] bg-[length:200%_auto] bg-clip-text text-transparent animate-text-shimmer [animation-delay:0.8s]">
+              Malobeka
+            </span>
+            <span className="text-muted-foreground/70 transition-colors group-hover:text-muted-foreground">
+              /&gt;
+            </span>
+          </Link>
+        </div>
+
+        {/* Right: desktop nav + socials */}
+        <div className="flex min-w-0 items-center justify-end gap-2">
+          <nav className="hidden min-w-0 flex-nowrap items-center gap-0 lg:flex" aria-label="Main"
+          >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground ${
+                className={`whitespace-nowrap rounded-lg px-1.5 py-2 text-xs font-medium transition-colors hover:bg-muted hover:text-foreground lg:px-2 lg:text-sm ${
                   pathname === link.href
                     ? "text-brand"
                     : "text-muted-foreground"
@@ -96,30 +115,8 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-        </div>
 
-        {/* Center: logo — each word its own color with a slow shimmer */}
-        <Link
-          href="/"
-          className="group absolute left-1/2 -translate-x-1/2 -ml-[33px] flex items-center gap-0.5 -space-x-0.5 whitespace-nowrap font-mono text-sm font-semibold transition-colors sm:ml-0 sm:gap-1 sm:text-base"
-          aria-label="Stephan Malobeka — home"
-        >
-          <span className="text-muted-foreground/70 transition-colors group-hover:text-muted-foreground">
-            &lt;
-          </span>
-          <span className="bg-gradient-to-r from-brand via-[oklch(0.8_0.18_190)] to-brand bg-[length:200%_auto] bg-clip-text text-transparent animate-text-shimmer">
-            Stephan
-          </span>
-          <span className="bg-gradient-to-r from-[oklch(0.75_0.16_250)] via-[oklch(0.72_0.16_300)] to-[oklch(0.75_0.16_250)] bg-[length:200%_auto] bg-clip-text text-transparent animate-text-shimmer [animation-delay:0.8s]">
-            Malobeka
-          </span>
-          <span className="text-muted-foreground/70 transition-colors group-hover:text-muted-foreground">
-            /&gt;
-          </span>
-        </Link>
-
-        {/* Right: socials */}
-        <div className="flex items-center">
+          <div className="flex items-center justify-end gap-0.5 sm:gap-1">
           {socialLinks.map((social) => (
             <a
               key={social.label}
@@ -152,8 +149,7 @@ export function SiteHeader() {
             </svg>
           </a>
         </div>
-
-
+        </div>
       </div>
     </header>
   );
