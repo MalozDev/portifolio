@@ -71,7 +71,8 @@ export const metadata: Metadata = {
 
 /* JSON-LD: tells Google exactly who "Stephan Malobeka" is, so the site
    surfaces for name searches (Person + WebSite schema). */
-const jsonLd = {
+const jsonLd = [
+  {
   "@context": "https://schema.org",
   "@type": "Person",
   name: person.name,
@@ -96,7 +97,16 @@ const jsonLd = {
     "IoT",
     "Cloud Computing",
   ],
-};
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: siteUrl,
+    description: siteDescription,
+    author: { "@type": "Person", name: person.name },
+  },
+];
 
 export const viewport: Viewport = {
   themeColor: "#0b0e14",

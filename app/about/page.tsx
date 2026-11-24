@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Award,
+  Briefcase,
   Download,
   Languages,
   Mail,
@@ -15,7 +16,7 @@ import { PhotoSlider } from "@/components/photo-slider";
 import { Terminal } from "@/components/terminal";
 import { Reveal } from "@/components/reveal";
 import { contact } from "@/lib/data";
-import { formatExperiencePeriod, getPortfolio } from "@/lib/portfolio";
+import { experienceDuration, formatExperiencePeriod, getPortfolio } from "@/lib/portfolio";
 import { getDb } from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
@@ -53,7 +54,7 @@ export default async function AboutPage() {
           <div className="mt-6 flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">
               <MapPin className="size-3.5 text-brand" aria-hidden="true" />
-              {contact.location}
+              {portfolioContact.location}
             </span>
             <a
               href={contact.phoneHref}
@@ -177,43 +178,69 @@ export default async function AboutPage() {
 
         <div className="relative mt-8 space-y-4 border-l border-border pl-6 sm:pl-8">
           {experiences.map((job, i) => (
-            <Reveal key={job.role} delay={i * 120}>
-              <article className="relative rounded-2xl border border-border bg-card p-6">
+            <Reveal key={`${job.role}-${job.company}`} delay={i * 120}>
+              <article className="relative overflow-hidden rounded-2xl border border-border bg-card">
                 {/* Timeline dot */}
                 <span
                   className="absolute top-7 -left-[1.87rem] size-3 rounded-full border-2 border-background bg-brand sm:-left-[2.4rem]"
                   aria-hidden="true"
                 />
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 className="font-display text-lg font-semibold">
-                    {job.role}
-                  </h3>
-                  <span className="font-mono text-xs text-brand">
-                    {formatExperiencePeriod(job)}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {job.company}
-                </p>
-                <ul className="mt-4 space-y-2">
-                  {job.points.map((point) => (
-                    <li
-                      key={point}
-                      className="flex gap-2 text-sm leading-relaxed text-muted-foreground"
-                    >
-                      <span
-                        className="mt-1.5 size-1.5 shrink-0 rounded-full bg-border"
-                        aria-hidden="true"
-                      />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                {job.highlight && (
-                  <p className="mt-4 rounded-xl border border-brand/30 bg-brand/10 p-3 text-sm font-medium text-brand">
-                    {job.highlight}
-                  </p>
+                {job.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={job.image}
+                    alt={`${job.role} at ${job.company}`}
+                    className="h-48 w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-48 w-full items-center justify-center bg-muted/40 text-muted-foreground">
+                    <div className="text-center">
+                      <Briefcase className="mx-auto size-6" aria-hidden="true" />
+                      <p className="mt-2 text-xs">Workplace photo coming soon</p>
+                    </div>
+                  </div>
                 )}
+                <div className="p-6">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="font-display text-lg font-semibold">
+                      {job.role}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {formatExperiencePeriod(job) && (
+                        <span className="font-mono text-xs text-brand">
+                          {formatExperiencePeriod(job)}
+                        </span>
+                      )}
+                      {experienceDuration(job) && (
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {experienceDuration(job)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {job.company}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {job.points.map((point) => (
+                      <li
+                        key={point}
+                        className="flex gap-2 text-sm leading-relaxed text-muted-foreground"
+                      >
+                        <span
+                          className="mt-1.5 size-1.5 shrink-0 rounded-full bg-border"
+                          aria-hidden="true"
+                        />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                  {job.highlight && (
+                    <p className="mt-4 rounded-xl border border-brand/30 bg-brand/10 p-3 text-sm font-medium text-brand">
+                      {job.highlight}
+                    </p>
+                  )}
+                </div>
               </article>
             </Reveal>
           ))}

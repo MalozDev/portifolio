@@ -13,6 +13,7 @@ import {
 import { useConsoleApi } from "@/components/console/use-console-api";
 
 interface ContentDoc {
+  location?: string;
   hero: { roles: string[]; bio: string; availability: string };
   about: { intro: string[]; quote: string };
   journey: { stage: string; title: string; note: string; items: string[] }[];
@@ -23,6 +24,7 @@ interface ContentDoc {
 }
 
 interface Draft {
+  location: string;
   roles: string;
   bio: string;
   availability: string;
@@ -37,6 +39,7 @@ interface Draft {
 
 function toDraft(c: ContentDoc): Draft {
   return {
+    location: c.location ?? "Ndola, Zambia",
     roles: c.hero.roles.join("\n"),
     bio: c.hero.bio,
     availability: c.hero.availability,
@@ -102,6 +105,7 @@ export default function ConsoleContentPage() {
     setSuccess(null);
     try {
       await api.put("/api/admin/content", {
+        location: draft.location,
         hero: {
           roles: draft.roles.split("\n").map((r) => r.trim()).filter(Boolean),
           bio: draft.bio,
@@ -233,6 +237,20 @@ export default function ConsoleContentPage() {
               />
             </Field>
           </div>
+        </div>
+      </section>
+
+      {/* Contact details */}
+      <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+        <h2 className="font-display text-base font-semibold">Contact details</h2>
+        <div className="mt-4">
+          <Field label="Location" hint="e.g. Ndola, Zambia">
+            <input
+              className={inputClass}
+              value={draft.location}
+              onChange={(e) => set("location", e.target.value)}
+            />
+          </Field>
         </div>
       </section>
 

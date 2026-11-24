@@ -116,6 +116,10 @@ export async function PUT(req: NextRequest) {
     });
   }
 
+  if (typeof b.location === "string") {
+    patch.location = b.location.trim() || defaultContent.location;
+  }
+
   const competencies = sanitizeStringArray(b.competencies, 50);
   if (competencies) patch.competencies = competencies;
 

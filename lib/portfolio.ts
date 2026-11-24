@@ -72,6 +72,7 @@ export interface PhotoDoc extends Document {
 
 export interface SiteContentDoc extends Document {
   _id: "site";
+  location?: string;
   cvFileId?: ObjectId;
   hero: {
     roles: string[];
@@ -135,6 +136,7 @@ export const defaultExperiences: Experience[] = [
 
 export const defaultContent: SiteContentDoc = {
   _id: "site",
+  location: staticContact.location,
   updatedAt: new Date(0),
   hero: {
     roles: [
@@ -431,6 +433,7 @@ export async function getPortfolio(db: Db | Promise<Db>): Promise<PortfolioData>
       content: contentDoc ?? defaultContent,
       contact: {
         ...staticContact,
+        location: contentDoc?.location ?? staticContact.location,
         cv: contentDoc?.cvFileId
           ? `/api/media/${contentDoc.cvFileId.toString()}`
           : staticContact.cv,
